@@ -2,7 +2,7 @@ require 'roo'
 
 class XLSX
     include Enumerable
-    attr_accessor :excel, :headers, :full, :row
+    attr_accessor :excel, :headers, :full, :row, :rows
 
     def initialize(root)
         @excel = Roo::Spreadsheet.open(root)
@@ -13,6 +13,7 @@ class XLSX
     def initTable()
         
         @headers = Hash[]
+        @rows = Hash[]
         @full = []
         @row = Array.new
 
@@ -32,11 +33,13 @@ class XLSX
                     last_column = sheet.last_column
                     puts "Last row and column set\n"
 
+                    #bolje da sam radio sa to_matrix koji bi mi napravio celu matricu kao objekat al sad kasno...
                     
                     currentHeader = ""
+                    currentRowIndex =""
                     first_column.upto(last_column) do |pointrc|
 
-                        fraction = Array.new
+                        fraction = Fraction.new
 
                         first_row.upto(last_row) do |pointrr|
 
@@ -55,6 +58,33 @@ class XLSX
                     end
                     puts "Table Headers Matrix ready\n"
 
+                    # index = 0
+                    # delete = 0
+                    # first_row.upto(last_row) do |pointrc|
+
+                    #     fraction = Fraction.new
+
+                    #     first_column.upto(last_column) do |pointrr|
+
+                    #         currentCell = sheet.cell(pointrr,pointrc)
+                    #         if (currentCell != nil)
+                    #             if(pointrr == first_column)
+                    #                 rows[index] = nil
+                    #             else
+                    #                 if(currentCell.casecmp "Subtotal" || currentCell.casecmp "Total")
+                    #                     delete = index
+                    #                 else
+                    #                     fraction << (currentCell)
+                    #                 end
+                    #             end
+                    #         end
+
+                    #     end
+                    #     rows[index] = fraction
+                    #     index +=1
+                    # end
+                    # puts "Table Rows Matrix ready\n"
+
                     counter = 0
                     first_row.upto(last_row) do |pointrr|
 
@@ -68,15 +98,22 @@ class XLSX
                             end
 
                         end
-                        full[counter] = *twodimensional
+                        # if(!twodimensional.empty?)
+                            full[counter] = *twodimensional
+                        # end
                         counter+=1
                     end
-                    puts "Table Rows Matrix ready\n"
+                    puts "Table Full Matrix ready\n"
 
                 else
                     puts "Sheet is empty\n"
                 end
             end
+        end
+    end
+
+    def delete(index)
+        row(index).each do
         end
     end
 
@@ -102,20 +139,44 @@ class XLSX
         end    
     end
 
+    def row_value(c, m, &b)
+        c.class_eval {
+            define_method(m, &b)
+        }
+    end
+    
+    def rows_search_methods
+        self.full.each do |key, value|
+            row_value(XLSX, key) do
+                if key != nil
+                    value
+                end
+            end
+        end    
+    end
+
+    def +(outsider)
+        if self.full[0] == outsider.full[0]
+            return self.full+outsider.full[1...]
+        end
+    end
+    def -(outsider)
+        if self.full[0] == outsider.full[0]
+            return self.full-outsider.full[1...]
+        end
+    end
+
+
 end
 
 class Fraction < Array
-    # puts "Table Rows Matrix ready\n"
-                    # first_row.upto(last_row) do |pointrr|
-                    #     first_column.upto(last_column) do |pointrc|
-                    #         currentCell = sheet.cell(pointrr,pointrc)
-                    #         if (currentCell != nil)
-                    #             if(currentCell == first_row)
-                    #                 rows.push(currentCell)
-                    #             else
-                    #                 fraction.push(currentCell)
-                    #             end
-                    #         end
-                    #     end
-                    # end
+    def sum
+        total=0
+        self.each do |cell|
+            if(cell != nil and cell.is_a? (Integer))
+                total = total + cell.to_i
+            end
+        end
+        total
+    end
 end
