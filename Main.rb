@@ -1,6 +1,6 @@
 require 'roo'
 require_relative 'xlsx'
-# require_relative 'xls'
+require_relative 'xls'
 
 # xlsx = Roo::Spreadsheet.open('./excel-tests/RubyTest.xlsx')
 # xlsx = Roo::Excelx.new("./excel-tests/RubyTest.xlsx")
@@ -52,3 +52,37 @@ p run+run2
 puts
 puts "Oduzimanje dve tabele"
 p run-run2
+puts
+puts "L E G A C Y -------------------------------------"
+puts
+puts "Ispis po headerima"
+p runlegacy.headers
+puts
+puts "Ispis cele kao dvodimenzionalni niz"
+p runlegacy.full
+puts
+puts "Ispis odabranog reda"
+p runlegacy.row(2)
+puts
+p runlegacy.headers
+puts
+puts "Ispis cele kao dvodimenzionalni niz sa implementiranim obracanjem paznje na mergeovane celije"
+p runlegacy.full
+puts
+puts "Ispis odabranog reda i odredjenog elementa unutar tog reda"
+p runlegacy.row(4)[0]
+puts
+puts "Implementacija enumerable"
+runlegacy.each do |cell|
+    p cell
+end
+puts
+puts "Ispis odabranog headera(kolone) kao i odredjenog elementa unutar te kolone"
+p runlegacy.headers["Second"]
+p runlegacy.headers["Second"][3]
+puts
+puts "Ispis odabranog headera u vidu metode kao i odredjenog elementa unutar te kolone"
+runlegacy.header_search_methods
+p runlegacy.Second
+p runlegacy.Second[0]
+puts

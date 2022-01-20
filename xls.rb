@@ -1,7 +1,7 @@
 require 'roo-xls'
 
 class XLS
-    include Enumerable
+    # include Enumerable
     attr_accessor :excel, :headers, :full, :row, :rows
 
     def initialize(root)
@@ -132,7 +132,7 @@ class XLS
     
     def header_search_methods
         self.headers.each do |key, value|
-            header_value(XLSX, key) do
+            header_value(XLS, key) do
                 value
             end
         end    
@@ -146,7 +146,7 @@ class XLS
     
     def rows_search_methods
         self.full.each do |key, value|
-            row_value(XLSX, key) do
+            row_value(XLS, key) do
                 if key != nil
                     value
                 end
