@@ -90,11 +90,11 @@ class XLSX
 
     def header_value(c, m, &b)
         c.class_eval {
-          define_header(m, &b)
+            define_method(m, &b)
         }
     end
     
-    def header_search_method
+    def header_search_methods
         self.headers.each do |key, value|
             header_value(XLSX, key) do
                 value
